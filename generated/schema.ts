@@ -12,7 +12,7 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class ExampleEntity extends Entity {
+export class Celebrity extends Entity {
   constructor(id: string) {
     super();
     this.set("id", Value.fromString(id));
@@ -20,17 +20,17 @@ export class ExampleEntity extends Entity {
 
   save(): void {
     let id = this.get("id");
-    assert(id !== null, "Cannot save ExampleEntity entity without an ID");
+    assert(id !== null, "Cannot save Celebrity entity without an ID");
     assert(
       id.kind == ValueKind.STRING,
-      "Cannot save ExampleEntity entity with non-string ID. " +
+      "Cannot save Celebrity entity with non-string ID. " +
         'Considering using .toHex() to convert the "id" to a string.'
     );
-    store.set("ExampleEntity", id.toString(), this);
+    store.set("Celebrity", id.toString(), this);
   }
 
-  static load(id: string): ExampleEntity | null {
-    return store.get("ExampleEntity", id) as ExampleEntity | null;
+  static load(id: string): Celebrity | null {
+    return store.get("Celebrity", id) as Celebrity | null;
   }
 
   get id(): string {
@@ -42,30 +42,71 @@ export class ExampleEntity extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get count(): BigInt {
-    let value = this.get("count");
-    return value.toBigInt();
+  get address(): Bytes | null {
+    let value = this.get("address");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
   }
 
-  set count(value: BigInt) {
-    this.set("count", Value.fromBigInt(value));
+  set address(value: Bytes | null) {
+    if (value === null) {
+      this.unset("address");
+    } else {
+      this.set("address", Value.fromBytes(value as Bytes));
+    }
   }
 
-  get previousAdmin(): Bytes {
-    let value = this.get("previousAdmin");
-    return value.toBytes();
+  get name(): string | null {
+    let value = this.get("name");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set previousAdmin(value: Bytes) {
-    this.set("previousAdmin", Value.fromBytes(value));
+  set name(value: string | null) {
+    if (value === null) {
+      this.unset("name");
+    } else {
+      this.set("name", Value.fromString(value as string));
+    }
   }
 
-  get newAdmin(): Bytes {
-    let value = this.get("newAdmin");
-    return value.toBytes();
+  get price(): BigInt | null {
+    let value = this.get("price");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
   }
 
-  set newAdmin(value: Bytes) {
-    this.set("newAdmin", Value.fromBytes(value));
+  set price(value: BigInt | null) {
+    if (value === null) {
+      this.unset("price");
+    } else {
+      this.set("price", Value.fromBigInt(value as BigInt));
+    }
+  }
+
+  get responseTime(): BigInt | null {
+    let value = this.get("responseTime");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set responseTime(value: BigInt | null) {
+    if (value === null) {
+      this.unset("responseTime");
+    } else {
+      this.set("responseTime", Value.fromBigInt(value as BigInt));
+    }
   }
 }
