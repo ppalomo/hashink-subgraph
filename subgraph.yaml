@@ -8,7 +8,7 @@ dataSources:
     name: CelebrityContract
     network: rinkeby
     source:
-      address: "0xC1477a5352D5823dc37bC025EA57B59890495865"
+      address: "0xAC9F1B2B7fBc94E81770816524299fC3e24E30E5"
       abi: CelebrityContract
     mapping:
       kind: ethereum/events
@@ -31,7 +31,7 @@ dataSources:
     name: AutographRequestContract
     network: rinkeby
     source:
-      address: "0x3d894Fb30FD68Bb722FCB419D911a566B93C5936"
+      address: "0x332427c2Bc87AB71BEd8f5456d1fDE29bD8eb96A"
       abi: AutographRequestContract
     mapping:
       kind: ethereum/events
@@ -47,6 +47,27 @@ dataSources:
           handler: handleRequestCreated
         - event: RequestDeleted(uint256,indexed address,indexed address,uint256,uint256,uint256)
           handler: handleRequestDeleted
-        - event: RequestSigned(uint256,indexed address,indexed address,uint256,uint256,uint256,string)
+        - event: RequestSigned(uint256,indexed address,indexed address,uint256,uint256,uint256,string,string)
           handler: handleRequestSigned
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: AutographContract
+    network: rinkeby
+    source:
+      address: "0x1e992E21c8558F339ee2a3956fA49Caa9c1a0CC4"
+      abi: AutographContract
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Autograph
+      abis:
+        - name: AutographContract
+          file: ./abis/AutographContract.json
+      eventHandlers:
+        - event: AutographMinted(uint256,indexed address,indexed address,string,string)
+          handler: handleAutographMinted
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
       file: ./src/mapping.ts

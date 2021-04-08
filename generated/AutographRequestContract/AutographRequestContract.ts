@@ -163,8 +163,12 @@ export class RequestSigned__Params {
     return this._event.parameters[5].value.toBigInt();
   }
 
-  get metadata(): string {
+  get imageURI(): string {
     return this._event.parameters[6].value.toString();
+  }
+
+  get metadataURI(): string {
+    return this._event.parameters[7].value.toString();
   }
 }
 
@@ -522,8 +526,12 @@ export class SignRequestCall__Inputs {
     return this._call.inputValues[0].value.toBigInt();
   }
 
-  get metadata(): string {
+  get imageURI(): string {
     return this._call.inputValues[1].value.toString();
+  }
+
+  get metadataURI(): string {
+    return this._call.inputValues[2].value.toString();
   }
 }
 

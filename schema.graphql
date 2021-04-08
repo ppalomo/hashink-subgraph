@@ -3,13 +3,23 @@ type Celebrity @entity {
   name: String
   price: BigInt
   responseTime: BigInt
+  requests: [Request!] @derivedFrom(field: "to")
+  autographs: [Autograph!] @derivedFrom(field: "creator")
 }
 
 type Request @entity {
   id: ID!
   from: Bytes
-  to: Bytes
+  to: Celebrity
   price: BigInt
   responseTime: BigInt
   created: BigInt
+}
+
+type Autograph @entity {
+  id: ID!
+  owner: Bytes
+  creator: Celebrity
+  imageURI: String
+  metadataURI: String
 }

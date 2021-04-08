@@ -92,6 +92,23 @@ export class Celebrity extends Entity {
       this.set("responseTime", Value.fromBigInt(value as BigInt));
     }
   }
+
+  get requests(): Array<string> | null {
+    let value = this.get("requests");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toStringArray();
+    }
+  }
+
+  set requests(value: Array<string> | null) {
+    if (value === null) {
+      this.unset("requests");
+    } else {
+      this.set("requests", Value.fromStringArray(value as Array<string>));
+    }
+  }
 }
 
 export class Request extends Entity {
@@ -141,20 +158,20 @@ export class Request extends Entity {
     }
   }
 
-  get to(): Bytes | null {
+  get to(): string | null {
     let value = this.get("to");
     if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
-      return value.toBytes();
+      return value.toString();
     }
   }
 
-  set to(value: Bytes | null) {
+  set to(value: string | null) {
     if (value === null) {
       this.unset("to");
     } else {
-      this.set("to", Value.fromBytes(value as Bytes));
+      this.set("to", Value.fromString(value as string));
     }
   }
 
@@ -206,6 +223,105 @@ export class Request extends Entity {
       this.unset("created");
     } else {
       this.set("created", Value.fromBigInt(value as BigInt));
+    }
+  }
+}
+
+export class Autograph extends Entity {
+  constructor(id: string) {
+    super();
+    this.set("id", Value.fromString(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id !== null, "Cannot save Autograph entity without an ID");
+    assert(
+      id.kind == ValueKind.STRING,
+      "Cannot save Autograph entity with non-string ID. " +
+        'Considering using .toHex() to convert the "id" to a string.'
+    );
+    store.set("Autograph", id.toString(), this);
+  }
+
+  static load(id: string): Autograph | null {
+    return store.get("Autograph", id) as Autograph | null;
+  }
+
+  get id(): string {
+    let value = this.get("id");
+    return value.toString();
+  }
+
+  set id(value: string) {
+    this.set("id", Value.fromString(value));
+  }
+
+  get owner(): Bytes | null {
+    let value = this.get("owner");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBytes();
+    }
+  }
+
+  set owner(value: Bytes | null) {
+    if (value === null) {
+      this.unset("owner");
+    } else {
+      this.set("owner", Value.fromBytes(value as Bytes));
+    }
+  }
+
+  get creator(): string | null {
+    let value = this.get("creator");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set creator(value: string | null) {
+    if (value === null) {
+      this.unset("creator");
+    } else {
+      this.set("creator", Value.fromString(value as string));
+    }
+  }
+
+  get imageURI(): string | null {
+    let value = this.get("imageURI");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set imageURI(value: string | null) {
+    if (value === null) {
+      this.unset("imageURI");
+    } else {
+      this.set("imageURI", Value.fromString(value as string));
+    }
+  }
+
+  get metadataURI(): string | null {
+    let value = this.get("metadataURI");
+    if (value === null || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
+  }
+
+  set metadataURI(value: string | null) {
+    if (value === null) {
+      this.unset("metadataURI");
+    } else {
+      this.set("metadataURI", Value.fromString(value as string));
     }
   }
 }
