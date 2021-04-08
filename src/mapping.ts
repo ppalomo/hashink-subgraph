@@ -3,17 +3,39 @@ import { CelebrityContract, CelebrityCreated, CelebrityDeleted, CelebrityUpdated
 import { Celebrity } from "../generated/schema"
 
 export function handleCelebrityCreated(event: CelebrityCreated): void {
-  let entity = Celebrity.load(event.params.owner)
-
-  // Entities only exist after they have been saved to the store;
-  // `null` checks allow to create entities on demand
-  if (entity == null) {
-    entity = new Celebrity(event.params.owner)
+  let celebrity = Celebrity.load(event.transaction.from.toHex())
+  if (celebrity == null) {
+    celebrity = new Celebrity(event.transaction.from.toHex())
   }
 
-  //entity.address = event.params.owner
-  entity.name = event.params.name
-  entity.price = event.params.price
-  entity.responseTime = event.params.responseTime
-  entity.save()
+  celebrity.name = event.params.name
+  celebrity.price = event.params.price
+  celebrity.responseTime = event.params.responseTime
+  celebrity.save()
 }
+
+export function handleCelebrityDeleted(event: CelebrityDeleted): void {
+  //???????????????????????????
+}
+
+export function handleCelebrityUpdated(event: CelebrityUpdated): void {
+  let id = event.params.owner.toHex()
+  let celebrity = Celebrity.load(id)
+  if (celebrity == null) {
+    celebrity = new Celebrity(id)
+  }
+
+  celebrity.name = event.params.name
+  celebrity.price = event.params.price
+  celebrity.responseTime = event.params.responseTime
+  celebrity.save()
+}
+
+// export function handleCelebrityCreated(event: CelebrityCreated): void {
+// }
+
+// export function handleCelebrityCreated(event: CelebrityCreated): void {
+// }
+
+// export function handleCelebrityCreated(event: CelebrityCreated): void {
+// }

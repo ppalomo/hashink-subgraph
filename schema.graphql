@@ -1,6 +1,15 @@
 type Celebrity @entity {
-  address: ID!
+  id: ID!
   name: String
   price: BigInt
   responseTime: BigInt
+}
+
+type Request @entity {
+  id: ID!
+  from: Bytes
+  to: Bytes
+  price: BigInt
+  responseTime: BigInt
+  created: BigInt
 }
