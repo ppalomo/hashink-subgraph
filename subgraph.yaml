@@ -5,34 +5,11 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: CelebrityContract
+    name: RequestContract
     network: rinkeby
     source:
-      address: "0xAC9F1B2B7fBc94E81770816524299fC3e24E30E5"
-      abi: CelebrityContract
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - Celebrity
-      abis:
-        - name: CelebrityContract
-          file: ./abis/CelebrityContract.json
-      eventHandlers:
-        - event: CelebrityCreated(indexed address,string,uint256,uint256)
-          handler: handleCelebrityCreated
-        - event: CelebrityDeleted(indexed address)
-          handler: handleCelebrityDeleted
-        - event: CelebrityUpdated(indexed address,string,uint256,uint256)
-          handler: handleCelebrityUpdated
-      file: ./src/mapping.ts
-  - kind: ethereum/contract
-    name: AutographRequestContract
-    network: rinkeby
-    source:
-      address: "0x332427c2Bc87AB71BEd8f5456d1fDE29bD8eb96A"
-      abi: AutographRequestContract
+      address: "0xfe0E8977dD57aCfb1B4444E28A27e2B1F587C3a1"
+      abi: RequestContract
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -40,8 +17,8 @@ dataSources:
       entities:
         - Request
       abis:
-        - name: AutographRequestContract
-          file: ./abis/AutographRequestContract.json
+        - name: RequestContract
+          file: ./abis/RequestContract.json
       eventHandlers:
         - event: RequestCreated(uint256,indexed address,indexed address,uint256,uint256,uint256)
           handler: handleRequestCreated
@@ -54,7 +31,7 @@ dataSources:
     name: AutographContract
     network: rinkeby
     source:
-      address: "0x1e992E21c8558F339ee2a3956fA49Caa9c1a0CC4"
+      address: "0xA2879ac731dAAB8B08865759870e9c33c951B7a3"
       abi: AutographContract
     mapping:
       kind: ethereum/events

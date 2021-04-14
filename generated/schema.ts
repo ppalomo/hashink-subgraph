@@ -12,105 +12,6 @@ import {
   BigDecimal
 } from "@graphprotocol/graph-ts";
 
-export class Celebrity extends Entity {
-  constructor(id: string) {
-    super();
-    this.set("id", Value.fromString(id));
-  }
-
-  save(): void {
-    let id = this.get("id");
-    assert(id !== null, "Cannot save Celebrity entity without an ID");
-    assert(
-      id.kind == ValueKind.STRING,
-      "Cannot save Celebrity entity with non-string ID. " +
-        'Considering using .toHex() to convert the "id" to a string.'
-    );
-    store.set("Celebrity", id.toString(), this);
-  }
-
-  static load(id: string): Celebrity | null {
-    return store.get("Celebrity", id) as Celebrity | null;
-  }
-
-  get id(): string {
-    let value = this.get("id");
-    return value.toString();
-  }
-
-  set id(value: string) {
-    this.set("id", Value.fromString(value));
-  }
-
-  get name(): string | null {
-    let value = this.get("name");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toString();
-    }
-  }
-
-  set name(value: string | null) {
-    if (value === null) {
-      this.unset("name");
-    } else {
-      this.set("name", Value.fromString(value as string));
-    }
-  }
-
-  get price(): BigInt | null {
-    let value = this.get("price");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set price(value: BigInt | null) {
-    if (value === null) {
-      this.unset("price");
-    } else {
-      this.set("price", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get responseTime(): BigInt | null {
-    let value = this.get("responseTime");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
-  }
-
-  set responseTime(value: BigInt | null) {
-    if (value === null) {
-      this.unset("responseTime");
-    } else {
-      this.set("responseTime", Value.fromBigInt(value as BigInt));
-    }
-  }
-
-  get requests(): Array<string> | null {
-    let value = this.get("requests");
-    if (value === null || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toStringArray();
-    }
-  }
-
-  set requests(value: Array<string> | null) {
-    if (value === null) {
-      this.unset("requests");
-    } else {
-      this.set("requests", Value.fromStringArray(value as Array<string>));
-    }
-  }
-}
-
 export class Request extends Entity {
   constructor(id: string) {
     super();
@@ -158,20 +59,20 @@ export class Request extends Entity {
     }
   }
 
-  get to(): string | null {
+  get to(): Bytes | null {
     let value = this.get("to");
     if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
-      return value.toString();
+      return value.toBytes();
     }
   }
 
-  set to(value: string | null) {
+  set to(value: Bytes | null) {
     if (value === null) {
       this.unset("to");
     } else {
-      this.set("to", Value.fromString(value as string));
+      this.set("to", Value.fromBytes(value as Bytes));
     }
   }
 
@@ -274,20 +175,20 @@ export class Autograph extends Entity {
     }
   }
 
-  get creator(): string | null {
+  get creator(): Bytes | null {
     let value = this.get("creator");
     if (value === null || value.kind == ValueKind.NULL) {
       return null;
     } else {
-      return value.toString();
+      return value.toBytes();
     }
   }
 
-  set creator(value: string | null) {
+  set creator(value: Bytes | null) {
     if (value === null) {
       this.unset("creator");
     } else {
-      this.set("creator", Value.fromString(value as string));
+      this.set("creator", Value.fromBytes(value as Bytes));
     }
   }
 
