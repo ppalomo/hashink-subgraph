@@ -1,4 +1,4 @@
-# subgraph
+# Hashink Subgraph
 Hashink subgraph repository.
 
 ## Get user NFT collection
