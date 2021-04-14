@@ -13,3 +13,16 @@ Hashink subgraph repository.
   }
 }
 ```
+
+## NFT collection by creator
+
+```
+{  
+  autographs(where:{creator:"0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc"}) {
+    id
+    owner
+    imageURI
+    metadataURI
+  }
+}
+```
