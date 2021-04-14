@@ -12,7 +12,7 @@ export function handleRequestCreated(event: RequestCreated): void {
   }
 
   request.from = event.params.from
-  request.to = event.params.to.toHex()
+  request.to = event.params.to
   request.price = event.params.price
   request.responseTime = event.params.responseTime
   request.created = event.params.created
@@ -37,7 +37,7 @@ export function handleAutographMinted(event: AutographMinted): void {
     autograph = new Autograph(event.params.id.toString())
   }
 
-  autograph.creator = event.params.creator.toHex()
+  autograph.creator = event.params.creator
   autograph.owner = event.params.owner
   autograph.imageURI = event.params.imageURI
   autograph.metadataURI = event.params.imageURI
