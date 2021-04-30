@@ -4,10 +4,11 @@ Hashink subgraph repository.
 ## Get user NFT collection
 
 ```
-{  
-  autographs(where:{owner:"0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"}) {
+{
+  autographs(where:{owner:"0x25f1db85c33e4b3d3732d02371dd13f7477f6185"}) {
     id
-    creator
+    owner
+    creators
     imageURI
     metadataURI
   }
@@ -17,10 +18,11 @@ Hashink subgraph repository.
 ## NFT collection by creator
 
 ```
-{  
-  autographs(where:{creator:"0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc"}) {
+{
+  autographs(where:{creators_contains:["0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc"]}) {
     id
     owner
+    creators
     imageURI
     metadataURI
   }
