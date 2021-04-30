@@ -79,8 +79,8 @@ export class AutographMinted__Params {
     return this._event.parameters[0].value.toBigInt();
   }
 
-  get creator(): Address {
-    return this._event.parameters[1].value.toAddress();
+  get creators(): Array<Address> {
+    return this._event.parameters[1].value.toAddressArray();
   }
 
   get owner(): Address {
@@ -122,59 +122,28 @@ export class Transfer__Params {
   }
 }
 
-export class AutographContract__autographsResult {
-  value0: Address;
-  value1: string;
-
-  constructor(value0: Address, value1: string) {
-    this.value0 = value0;
-    this.value1 = value1;
-  }
-
-  toMap(): TypedMap<string, ethereum.Value> {
-    let map = new TypedMap<string, ethereum.Value>();
-    map.set("value0", ethereum.Value.fromAddress(this.value0));
-    map.set("value1", ethereum.Value.fromString(this.value1));
-    return map;
-  }
-}
-
 export class AutographContract extends ethereum.SmartContract {
   static bind(address: Address): AutographContract {
     return new AutographContract("AutographContract", address);
   }
 
-  autographs(param0: BigInt): AutographContract__autographsResult {
-    let result = super.call(
-      "autographs",
-      "autographs(uint256):(address,string)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
-    );
+  autographs(param0: BigInt): string {
+    let result = super.call("autographs", "autographs(uint256):(string)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
 
-    return new AutographContract__autographsResult(
-      result[0].toAddress(),
-      result[1].toString()
-    );
+    return result[0].toString();
   }
 
-  try_autographs(
-    param0: BigInt
-  ): ethereum.CallResult<AutographContract__autographsResult> {
-    let result = super.tryCall(
-      "autographs",
-      "autographs(uint256):(address,string)",
-      [ethereum.Value.fromUnsignedBigInt(param0)]
-    );
+  try_autographs(param0: BigInt): ethereum.CallResult<string> {
+    let result = super.tryCall("autographs", "autographs(uint256):(string)", [
+      ethereum.Value.fromUnsignedBigInt(param0)
+    ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(
-      new AutographContract__autographsResult(
-        value[0].toAddress(),
-        value[1].toString()
-      )
-    );
+    return ethereum.CallResult.fromValue(value[0].toString());
   }
 
   balanceOf(owner: Address): BigInt {
@@ -211,23 +180,23 @@ export class AutographContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toString());
   }
 
-  creatorOf(tokenId: BigInt): Address {
-    let result = super.call("creatorOf", "creatorOf(uint256):(address)", [
+  creatorOf(tokenId: BigInt): Array<Address> {
+    let result = super.call("creatorOf", "creatorOf(uint256):(address[])", [
       ethereum.Value.fromUnsignedBigInt(tokenId)
     ]);
 
-    return result[0].toAddress();
+    return result[0].toAddressArray();
   }
 
-  try_creatorOf(tokenId: BigInt): ethereum.CallResult<Address> {
-    let result = super.tryCall("creatorOf", "creatorOf(uint256):(address)", [
+  try_creatorOf(tokenId: BigInt): ethereum.CallResult<Array<Address>> {
+    let result = super.tryCall("creatorOf", "creatorOf(uint256):(address[])", [
       ethereum.Value.fromUnsignedBigInt(tokenId)
     ]);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
     let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toAddress());
+    return ethereum.CallResult.fromValue(value[0].toAddressArray());
   }
 
   getApproved(tokenId: BigInt): Address {
@@ -279,16 +248,16 @@ export class AutographContract extends ethereum.SmartContract {
 
   mint(
     to: Address,
-    from: Address,
+    signers: Array<Address>,
     imageURI: string,
     metadataURI: string
   ): BigInt {
     let result = super.call(
       "mint",
-      "mint(address,address,string,string):(uint256)",
+      "mint(address,address[],string,string):(uint256)",
       [
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromAddress(from),
+        ethereum.Value.fromAddressArray(signers),
         ethereum.Value.fromString(imageURI),
         ethereum.Value.fromString(metadataURI)
       ]
@@ -299,16 +268,16 @@ export class AutographContract extends ethereum.SmartContract {
 
   try_mint(
     to: Address,
-    from: Address,
+    signers: Array<Address>,
     imageURI: string,
     metadataURI: string
   ): ethereum.CallResult<BigInt> {
     let result = super.tryCall(
       "mint",
-      "mint(address,address,string,string):(uint256)",
+      "mint(address,address[],string,string):(uint256)",
       [
         ethereum.Value.fromAddress(to),
-        ethereum.Value.fromAddress(from),
+        ethereum.Value.fromAddressArray(signers),
         ethereum.Value.fromString(imageURI),
         ethereum.Value.fromString(metadataURI)
       ]
@@ -478,21 +447,6 @@ export class AutographContract extends ethereum.SmartContract {
     let value = result.value;
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
-
-  version(): BigInt {
-    let result = super.call("version", "version():(uint256)", []);
-
-    return result[0].toBigInt();
-  }
-
-  try_version(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall("version", "version():(uint256)", []);
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
 }
 
 export class ApproveCall extends ethereum.Call {
@@ -576,8 +530,8 @@ export class MintCall__Inputs {
     return this._call.inputValues[0].value.toAddress();
   }
 
-  get from(): Address {
-    return this._call.inputValues[1].value.toAddress();
+  get signers(): Array<Address> {
+    return this._call.inputValues[1].value.toAddressArray();
   }
 
   get imageURI(): string {

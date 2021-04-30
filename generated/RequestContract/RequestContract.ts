@@ -71,8 +71,8 @@ export class RequestCreated__Params {
     return this._event.parameters[1].value.toAddress();
   }
 
-  get to(): Address {
-    return this._event.parameters[2].value.toAddress();
+  get to(): Array<Address> {
+    return this._event.parameters[2].value.toAddressArray();
   }
 
   get price(): BigInt {
@@ -109,33 +109,29 @@ export class RequestDeleted__Params {
     return this._event.parameters[1].value.toAddress();
   }
 
-  get to(): Address {
-    return this._event.parameters[2].value.toAddress();
-  }
-
   get price(): BigInt {
-    return this._event.parameters[3].value.toBigInt();
+    return this._event.parameters[2].value.toBigInt();
   }
 
   get responseTime(): BigInt {
-    return this._event.parameters[4].value.toBigInt();
+    return this._event.parameters[3].value.toBigInt();
   }
 
   get created(): BigInt {
-    return this._event.parameters[5].value.toBigInt();
+    return this._event.parameters[4].value.toBigInt();
   }
 }
 
-export class RequestSigned extends ethereum.Event {
-  get params(): RequestSigned__Params {
-    return new RequestSigned__Params(this);
+export class RequestMinted extends ethereum.Event {
+  get params(): RequestMinted__Params {
+    return new RequestMinted__Params(this);
   }
 }
 
-export class RequestSigned__Params {
-  _event: RequestSigned;
+export class RequestMinted__Params {
+  _event: RequestMinted;
 
-  constructor(event: RequestSigned) {
+  constructor(event: RequestMinted) {
     this._event = event;
   }
 
@@ -172,34 +168,43 @@ export class RequestSigned__Params {
   }
 }
 
+export class WalletChanged extends ethereum.Event {
+  get params(): WalletChanged__Params {
+    return new WalletChanged__Params(this);
+  }
+}
+
+export class WalletChanged__Params {
+  _event: WalletChanged;
+
+  constructor(event: WalletChanged) {
+    this._event = event;
+  }
+
+  get addr(): Address {
+    return this._event.parameters[0].value.toAddress();
+  }
+}
+
 export class RequestContract__requestsResult {
   value0: Address;
-  value1: Address;
+  value1: BigInt;
   value2: BigInt;
   value3: BigInt;
-  value4: BigInt;
 
-  constructor(
-    value0: Address,
-    value1: Address,
-    value2: BigInt,
-    value3: BigInt,
-    value4: BigInt
-  ) {
+  constructor(value0: Address, value1: BigInt, value2: BigInt, value3: BigInt) {
     this.value0 = value0;
     this.value1 = value1;
     this.value2 = value2;
     this.value3 = value3;
-    this.value4 = value4;
   }
 
   toMap(): TypedMap<string, ethereum.Value> {
     let map = new TypedMap<string, ethereum.Value>();
     map.set("value0", ethereum.Value.fromAddress(this.value0));
-    map.set("value1", ethereum.Value.fromAddress(this.value1));
+    map.set("value1", ethereum.Value.fromUnsignedBigInt(this.value1));
     map.set("value2", ethereum.Value.fromUnsignedBigInt(this.value2));
     map.set("value3", ethereum.Value.fromUnsignedBigInt(this.value3));
-    map.set("value4", ethereum.Value.fromUnsignedBigInt(this.value4));
     return map;
   }
 }
@@ -262,41 +267,14 @@ export class RequestContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(value[0].toBigInt());
   }
 
-  getTotalSupply(): BigInt {
-    let result = super.call("getTotalSupply", "getTotalSupply():(uint256)", []);
+  numRequests(): BigInt {
+    let result = super.call("numRequests", "numRequests():(uint256)", []);
 
     return result[0].toBigInt();
   }
 
-  try_getTotalSupply(): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "getTotalSupply",
-      "getTotalSupply():(uint256)",
-      []
-    );
-    if (result.reverted) {
-      return new ethereum.CallResult();
-    }
-    let value = result.value;
-    return ethereum.CallResult.fromValue(value[0].toBigInt());
-  }
-
-  getVIPBalance(addr: Address): BigInt {
-    let result = super.call(
-      "getVIPBalance",
-      "getVIPBalance(address):(uint256)",
-      [ethereum.Value.fromAddress(addr)]
-    );
-
-    return result[0].toBigInt();
-  }
-
-  try_getVIPBalance(addr: Address): ethereum.CallResult<BigInt> {
-    let result = super.tryCall(
-      "getVIPBalance",
-      "getVIPBalance(address):(uint256)",
-      [ethereum.Value.fromAddress(addr)]
-    );
+  try_numRequests(): ethereum.CallResult<BigInt> {
+    let result = super.tryCall("numRequests", "numRequests():(uint256)", []);
     if (result.reverted) {
       return new ethereum.CallResult();
     }
@@ -368,16 +346,15 @@ export class RequestContract extends ethereum.SmartContract {
   requests(param0: BigInt): RequestContract__requestsResult {
     let result = super.call(
       "requests",
-      "requests(uint256):(address,address,uint256,uint256,uint256)",
+      "requests(uint256):(address,uint256,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
 
     return new RequestContract__requestsResult(
       result[0].toAddress(),
-      result[1].toAddress(),
+      result[1].toBigInt(),
       result[2].toBigInt(),
-      result[3].toBigInt(),
-      result[4].toBigInt()
+      result[3].toBigInt()
     );
   }
 
@@ -386,7 +363,7 @@ export class RequestContract extends ethereum.SmartContract {
   ): ethereum.CallResult<RequestContract__requestsResult> {
     let result = super.tryCall(
       "requests",
-      "requests(uint256):(address,address,uint256,uint256,uint256)",
+      "requests(uint256):(address,uint256,uint256,uint256)",
       [ethereum.Value.fromUnsignedBigInt(param0)]
     );
     if (result.reverted) {
@@ -396,12 +373,26 @@ export class RequestContract extends ethereum.SmartContract {
     return ethereum.CallResult.fromValue(
       new RequestContract__requestsResult(
         value[0].toAddress(),
-        value[1].toAddress(),
+        value[1].toBigInt(),
         value[2].toBigInt(),
-        value[3].toBigInt(),
-        value[4].toBigInt()
+        value[3].toBigInt()
       )
     );
+  }
+
+  wallet(): Address {
+    let result = super.call("wallet", "wallet():(address)", []);
+
+    return result[0].toAddress();
+  }
+
+  try_wallet(): ethereum.CallResult<Address> {
+    let result = super.tryCall("wallet", "wallet():(address)", []);
+    if (result.reverted) {
+      return new ethereum.CallResult();
+    }
+    let value = result.value;
+    return ethereum.CallResult.fromValue(value[0].toAddress());
   }
 }
 
@@ -422,8 +413,8 @@ export class CreateRequestCall__Inputs {
     this._call = call;
   }
 
-  get to(): Address {
-    return this._call.inputValues[0].value.toAddress();
+  get signers(): Array<Address> {
+    return this._call.inputValues[0].value.toAddressArray();
   }
 
   get responseTime(): BigInt {
@@ -499,6 +490,48 @@ export class InitializeCall__Outputs {
   }
 }
 
+export class MintRequestCall extends ethereum.Call {
+  get inputs(): MintRequestCall__Inputs {
+    return new MintRequestCall__Inputs(this);
+  }
+
+  get outputs(): MintRequestCall__Outputs {
+    return new MintRequestCall__Outputs(this);
+  }
+}
+
+export class MintRequestCall__Inputs {
+  _call: MintRequestCall;
+
+  constructor(call: MintRequestCall) {
+    this._call = call;
+  }
+
+  get id(): BigInt {
+    return this._call.inputValues[0].value.toBigInt();
+  }
+
+  get signers(): Array<Address> {
+    return this._call.inputValues[1].value.toAddressArray();
+  }
+
+  get imageURI(): string {
+    return this._call.inputValues[2].value.toString();
+  }
+
+  get metadataURI(): string {
+    return this._call.inputValues[3].value.toString();
+  }
+}
+
+export class MintRequestCall__Outputs {
+  _call: MintRequestCall;
+
+  constructor(call: MintRequestCall) {
+    this._call = call;
+  }
+}
+
 export class RenounceOwnershipCall extends ethereum.Call {
   get inputs(): RenounceOwnershipCall__Inputs {
     return new RenounceOwnershipCall__Inputs(this);
@@ -555,40 +588,32 @@ export class SetFeePercentCall__Outputs {
   }
 }
 
-export class SignRequestCall extends ethereum.Call {
-  get inputs(): SignRequestCall__Inputs {
-    return new SignRequestCall__Inputs(this);
+export class SetWalletCall extends ethereum.Call {
+  get inputs(): SetWalletCall__Inputs {
+    return new SetWalletCall__Inputs(this);
   }
 
-  get outputs(): SignRequestCall__Outputs {
-    return new SignRequestCall__Outputs(this);
+  get outputs(): SetWalletCall__Outputs {
+    return new SetWalletCall__Outputs(this);
   }
 }
 
-export class SignRequestCall__Inputs {
-  _call: SignRequestCall;
+export class SetWalletCall__Inputs {
+  _call: SetWalletCall;
 
-  constructor(call: SignRequestCall) {
+  constructor(call: SetWalletCall) {
     this._call = call;
   }
 
-  get id(): BigInt {
-    return this._call.inputValues[0].value.toBigInt();
-  }
-
-  get imageURI(): string {
-    return this._call.inputValues[1].value.toString();
-  }
-
-  get metadataURI(): string {
-    return this._call.inputValues[2].value.toString();
+  get _addr(): Address {
+    return this._call.inputValues[0].value.toAddress();
   }
 }
 
-export class SignRequestCall__Outputs {
-  _call: SignRequestCall;
+export class SetWalletCall__Outputs {
+  _call: SetWalletCall;
 
-  constructor(call: SignRequestCall) {
+  constructor(call: SetWalletCall) {
     this._call = call;
   }
 }

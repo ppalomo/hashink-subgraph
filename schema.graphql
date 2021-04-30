@@ -1,16 +1,7 @@
-type Request @entity {
-  id: ID!
-  from: Bytes
-  to: Bytes
-  price: BigInt
-  responseTime: BigInt
-  created: BigInt
-}
-
 type Autograph @entity {
   id: ID!
   owner: Bytes
-  creator: Bytes
+  creators: [Bytes!]
   imageURI: String
   metadataURI: String
 }

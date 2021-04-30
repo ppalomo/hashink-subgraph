@@ -1,33 +1,6 @@
-import { BigInt, store } from "@graphprotocol/graph-ts"
+import { Bytes } from "@graphprotocol/graph-ts"
 import { AutographContract, AutographMinted, Transfer } from "../generated/AutographContract/AutographContract"
-import { RequestContract, RequestCreated, RequestDeleted, RequestSigned } from "../generated/RequestContract/RequestContract"
-import { Request, Autograph } from "../generated/schema"
-
-// Requests Contract
-
-export function handleRequestCreated(event: RequestCreated): void {
-  let request = Request.load(event.params.id.toString())
-  if (request == null) {
-    request = new Request(event.params.id.toString())
-  }
-
-  request.from = event.params.from
-  request.to = event.params.to
-  request.price = event.params.price
-  request.responseTime = event.params.responseTime
-  request.created = event.params.created
-  request.save()
-}
-
-export function handleRequestDeleted(event: RequestDeleted): void {
-  let id = event.params.id.toString()
-  store.remove('Request', id)
-}
-
-export function handleRequestSigned(event: RequestSigned): void {
-  let id = event.params.id.toString()
-  store.remove('Request', id)
-}
+import { Autograph } from "../generated/schema"
 
 // Autograph Contract
 
@@ -37,7 +10,14 @@ export function handleAutographMinted(event: AutographMinted): void {
     autograph = new Autograph(event.params.id.toString())
   }
 
-  autograph.creator = event.params.creator
+  let creators = event.params.creators;
+  let creatorsList = new Array<Bytes>();
+  for (let i = 0; i < creators.length; i++) {
+    let creator = creators[i];
+    creatorsList.push(creator);
+  }
+  
+  autograph.creators = creatorsList;
   autograph.owner = event.params.owner
   autograph.imageURI = event.params.imageURI
   autograph.metadataURI = event.params.imageURI
