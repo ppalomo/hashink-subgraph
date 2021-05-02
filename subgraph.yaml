@@ -8,7 +8,7 @@ dataSources:
     name: AutographContract
     network: rinkeby
     source:
-      address: "0xFbd8c6e8b5ff34bd149884158D53a0b8E58861aC"
+      address: "0xE1A19Eb074815e4028768182F8971D222416159A"
       abi: AutographContract
     mapping:
       kind: ethereum/events
